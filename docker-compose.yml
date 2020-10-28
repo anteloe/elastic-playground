@@ -1,12 +1,13 @@
 version: "2.2"
 services:
-  elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.4.2
-    container_name: elasticsearch
+  es01:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.9.3
+    container_name: es01
     environment:
-      - node.name=elastic
+      - node.name=es01
       - cluster.name=es-docker-cluster
-      - cluster.initial_master_nodes=elastic
+      - discovery.seed_hosts=es01
+      - cluster.initial_master_nodes=es01
       - bootstrap.memory_lock=true
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
     ulimits:
@@ -14,21 +15,66 @@ services:
         soft: -1
         hard: -1
     volumes:
-      - data:/usr/share/elasticsearch/data
+      - data-01:/usr/share/elasticsearch/data
     ports:
       - 9200:9200
     networks:
       - elastic-cluster
+  
+  es02:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.9.3
+    container_name: es02
+    environment:
+      - node.name=es02
+      - cluster.name=es-docker-cluster
+      - discovery.seed_hosts=es01
+      - cluster.initial_master_nodes=es01
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - data-02:/usr/share/elasticsearch/data
+    networks:
+      - elastic-cluster
+
+  es03:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.9.3
+    container_name: es03
+    environment:
+      - node.name=es03
+      - cluster.name=es-docker-cluster
+      - discovery.seed_hosts=es01
+      - cluster.initial_master_nodes=es01
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - data-03:/usr/share/elasticsearch/data
+    networks:
+      - elastic-cluster
+  
   kibana:
-    image: docker.elastic.co/kibana/kibana:7.4.2
+    image: docker.elastic.co/kibana/kibana:7.9.3
     container_name: kibana
+    environment: 
+      ELASTICSEARCH_HOSTS: "http://es01:9200"
     ports:
       - 5601:5601
     networks:
       - elastic-cluster
 
 volumes:
-  data:
+  data-01:
+    driver: local
+  data-02:
+    driver: local
+  data-03:
     driver: local
 
 networks:

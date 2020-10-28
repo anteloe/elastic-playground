@@ -1,6 +1,6 @@
 # Elastic Playground
 
-This repo consists solely of a docker-compose file which starts an Elasticsearch Server with Single Node cluster with a Kibana Server connected to it.
+This repo consists solely of a docker-compose file which starts an Elasticsearch multi-node cluster with a Kibana Server connected to it.
 
 ## Pre-Requisites
 
